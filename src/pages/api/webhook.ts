@@ -1,6 +1,8 @@
 /* eslint-disable import/no-anonymous-default-export */
 import { NextApiRequest, NextApiResponse } from "next";
 import { Readable } from "stream";
+import Stripe from "stripe";
+import { stripe } from "../../services/stripe";
 
 async function buffer(readable: Readable) {
   const chunk = [];
@@ -16,9 +18,31 @@ export const config = {
     bodyParser: false,
   },
 };
+
+const relevantEvents = new Set([
+  "checkout.session.completed",
+  "customer.subscription.updated",
+  "customer.subscription.deleted",
+]);
+
 export default async (request: NextApiRequest, response: NextApiResponse) => {
   if (request.method === "POST") {
     const buf = await buffer(request);
+    const secret = request.headers['stripe-signature']
+
+    let event: Stripe.Event;
+
+    try {
+      event = stripe.webhooks.constructEvent(buf, secret, process.env.STRIPE_WEBHOOK_SECRET);
+    } catch (err){
+      return response.status(400).send(`Webhook error: ${err.message}`)
+    }
+
+    const type = event.type
+
+    if(relevantEvents.has(type)){
+      console.log('Event received', event)
+    }
 
     response.status(200).json({ ok: true });
   } else {
