@@ -1,5 +1,5 @@
 {
-  "id": "post-ignews-zadraki",
+  "id": "publication",
   "label": "Post",
   "repeatable": true,
   "status": true,
@@ -12,18 +12,22 @@
           "placeholder": ""
         }
       },
-      "Title": {
-        "type": "Text",
+      "title": {
+        "type": "StructuredText",
         "config": {
           "label": "Title",
-          "placeholder": ""
+          "placeholder": "",
+          "allowTargetBlank": true,
+          "single": "heading1"
         }
       },
-      "Content": {
-        "type": "Text",
+      "content": {
+        "type": "StructuredText",
         "config": {
           "label": "Content",
-          "placeholder": ""
+          "placeholder": "",
+          "allowTargetBlank": true,
+          "single": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
         }
       }
     }
